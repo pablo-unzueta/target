@@ -5,4 +5,3 @@ def velocity_verlet():
 
 def rescale_velocity():
     raise NotImplementedError
-

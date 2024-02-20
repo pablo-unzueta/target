@@ -1,0 +1,72 @@
+root: results/ethylene # directory to save the results
+run_name: test # name of the run
+
+# two types to declare your initial condition:
+# 1. ase: use ase to read the geometry (angstroms) and velocities (angstroms/ 1/20.455 ps) aka AMBER units
+# 2. wigner: use the legacy wigner script to read the geometry and momenta from a Geometry.dat file
+ic:
+  ase_geometry: ./geometry.xyz #path to the geometry file 
+  ase_velocities: ./velocities.xyz #path to the velocities file  
+  # geometry_dat: /path/to/Geometry.Dat # path to the wigner file instead of the previous two
+
+################ Initialization ###############
+restart: false # restart from last time step
+redo_restart_ES: false # redo the restart from the last time step
+
+init_state: 2 # initial traj state
+# ignore_state: 0 kill traj when they hit this state
+num_atoms: 6
+num_states: 3
+num_singlets: 3
+###############################################
+
+
+
+################ Electronic ###################
+
+#method: terachem # server option is faster but using file for debug
+#mode: server
+#  localhost: 8080
+#mode: file
+
+method: bagel
+bagel_template: /path/to/template # bagel template file. writer modifies coords
+
+# method: neural_network
+# nn_path: /path/to/nn # must deployed ML models equal to the number of states
+# nn_prefix: state # will create state-0.pth, state-1.pth, etc
+# nn_suffix: pth
+###############################################
+
+
+################ Simulation ###################
+
+###############################################
+
+################ Numerics #####################
+timestep: 20 # time step in a.u.
+simulation_time: 1000 # total simulation time in a.u.
+energy_shift: 78.5 # energy shift in Hartree
+adaptive_timestep: true # use adaptive time step
+spawn_adaptive: true
+reg_thresehold: 1e-5 # reg threshold for amp
+assume_hermetian: true # only compute upper half of H and S
+I_Saddle: 0 # how to approximate integrals
+timestep_reject: true
+die_on_min_timestep: true
+coup_timestep: 5.0
+min_timestep: 0.02
+energy_step_conservation: 0.006
+###############################################
+
+################ Spawning #####################
+multi_spawn: 1 # number of spawns per event
+max_traj: 1000 # max number of trajectories
+first_gauss: false # first gaussian has perfect overlap with wfn
+overlap_max: 0.6 # prevent spawn if spawned traj has least this much overlap with the electronic state
+max_energy_diff: 0.02 # if energy diff is bigger than this, coupling is 0
+pop_to_spawn: 0.1 # minimum population before children
+#coupling_method: coup_v # use coupling dotted into velocity
+coupling_method: coup # use norm of coupling
+coupling_thresh: 10 # value to entire spawning
+###############################################
